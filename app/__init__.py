@@ -2,11 +2,12 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore, utils
-from config import FIRST_USER_PASS, FIRST_USER_NAME
+from config import FIRST_USER_PASS, FIRST_USER_NAME, basedir
 from flask_wtf.csrf import CsrfProtect
 from flask_admin.contrib.sqla import ModelView
 from flask.ext.admin import Admin
 from flask_admin.base import MenuLink
+import os
 
 # initialize the application, import config, setup database, setup CSRF protection
 app = Flask(__name__)
@@ -25,7 +26,8 @@ sec = Security(app, userstore)
 try:
     with app.app_context():
         userstore.find_or_create_role(name='admin', description='Administrator')
-        userstore.find_or_create_role(name='team', description='Team accounts')
+        userstore.find_or_create_role(name='blueteam', description='Blue team accounts')
+        userstore.find_or_create_role(name='whiteteam', description='White team accounts')
         userstore.create_user(email=FIRST_USER_NAME,
                             password=utils.encrypt_password(FIRST_USER_PASS))
         userstore.add_role_to_user(FIRST_USER_NAME, 'admin')
@@ -33,13 +35,16 @@ try:
 except: db.session.rollback()
 
 # get the view controllers for the app
-from app.views import main, admin, common
+from app.views import main, admin, common, teamportal
 
 # set up main as a blueprint, add as many blueprints as necessary
 app.register_blueprint(main.main)
+app.register_blueprint(teamportal.teamportal)
 
 # configure the admin interface, populate it with pages and links
-app_admin = Admin(app, 'IRSeC Inject Portal Admin', template_mode='bootstrap3', index_view=admin.AdminIndexView())
+app_admin = Admin(app, 'IRSeC Inject Portal Admin', template_mode='bootstrap3', index_view=admin.ProtectedIndexView())
+app_admin.add_view(admin.InjectModelView(models.Inject, db.session))
+app_admin.add_view(admin.WhiteTeamFileAdmin(os.path.join(basedir, "app", "static", "shared"), '/shared/', name="Shared Files"))
 app_admin.add_view(admin.UserModelView(models.User, db.session))
 app_admin.add_view(admin.RoleModelView(models.Role, db.session))
 app_admin.add_link(MenuLink(name='Back to Site', url='/'))

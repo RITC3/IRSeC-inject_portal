@@ -28,13 +28,17 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
+                {% if g.user.is_blueteam %}
+                <a href="{{url_for('teamportal.team_portal')}}" class="navbar-brand"><span><i class="fa fa-upload"></i></span> IRSeC Inject Portal</a>
+                {% else %}
                 <a href="{{url_for('main.index')}}" class="navbar-brand"><span><i class="fa fa-upload"></i></span> IRSeC Inject Portal</a>
+                {% endif %}
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     {% if g.user.is_authenticated %}
                     <li id="files"><a href="{{url_for('main.files')}}"><i class="fa fa-dashboard"></i> Files</a></li>
-                    {% if g.user.is_admin %}
+                    {% if g.user.is_whiteteam %}
                     <li id="admin"><a href="{{url_for('admin.index')}}"><i class="fa fa-cog"></i> Admin</a></li>
                     {% endif %}
                     <li id="logout"><a href="{{url_for('security.logout')}}"><i class="fa fa-sign-out"></i> Logout</a></li>

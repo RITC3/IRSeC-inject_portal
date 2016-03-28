@@ -11,6 +11,11 @@ roles_users = db.Table('roles_users',
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
 
+submissions_users = db.Table('submissions_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('submission_id', db.Integer(), db.ForeignKey('injectsubmission.id')))
+
+
 """
 User: defines users and their attribles for the website
 Parents: db.Model, flask.ext.security.UserMixin
@@ -27,6 +32,8 @@ class User(db.Model, UserMixin):
     login_count = db.Column(db.Integer)
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
+    submissions = db.relationship('InjectSubmission', secondary=submissions_users,
+                            backref=db.backref('teams', lazy='dynamic'))
 
     """flask admin needs this to print the user correctly"""
     def __str__(self):
@@ -42,6 +49,14 @@ class User(db.Model, UserMixin):
     def is_admin(self):
         return self.has_role('admin')
 
+    @hybrid_property
+    def is_blueteam(self):
+        return self.has_role('blueteam')
+
+    @hybrid_property
+    def is_whiteteam(self):
+        return self.has_role('whiteteam') or self.has_role('admin')
+
 
 """
 Role: the table for roles on the site
@@ -55,3 +70,28 @@ class Role(db.Model, RoleMixin):
     """flask admin needs this to print the role correctly"""
     def __str__(self):
         return self.name
+
+
+class Inject(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(1000))
+    value = db.Column(db.Integer) # will this be used?
+
+    """flask admin needs this to print the role correctly"""
+    def __str__(self):
+        return self.name
+
+
+class InjectSubmission(db.Model):
+    __tablename__ = "injectsubmission"
+    id = db.Column(db.Integer(), primary_key=True)
+    title = db.Column(db.String(60))
+    notes = db.Column(db.String(500))
+    attachment = db.Column(db.String(100))
+    inject_id = db.Column(db.Integer, db.ForeignKey('inject.id'), nullable=False)
+    inject = db.relationship("Inject")
+
+    """flask admin needs this to print the role correctly"""
+    def __str__(self):
+        return self.title
