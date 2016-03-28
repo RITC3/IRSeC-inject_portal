@@ -1,6 +1,7 @@
 from app import db
 from sqlalchemy.ext.hybrid import hybrid_property
 from flask.ext.security import UserMixin, RoleMixin, current_user
+from datetime import datetime
 
 """ a third table must be created to relate users to roles by id.
     this is an example of a many-to-many relationship in SQLAlchemy
@@ -77,10 +78,31 @@ class Inject(db.Model):
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(1000))
     value = db.Column(db.Integer) # will this be used?
+    publish = db.Column(db.Boolean)
+    publish_time = db.Column(db.DateTime, default=datetime.now())
+    end_time = db.Column(db.DateTime)
 
     """flask admin needs this to print the role correctly"""
     def __str__(self):
         return self.name
+
+    def has_ended(self):
+        if datetime.now() > self.end_time:
+            return True
+        return False
+
+    def is_published(self):
+        if self.publish and datetime.now() > self.publish_time:
+            return True
+        return False
+
+    @hybrid_property
+    def publish_time_str(self):
+        return self.publish_time.strftime('%A, %B %d %Y %I:%M%p')
+
+    @hybrid_property
+    def print_end_str(self):
+        return self.end_time.strftime('%A, %B %d %Y %I:%M%p')
 
 
 class InjectSubmission(db.Model):
