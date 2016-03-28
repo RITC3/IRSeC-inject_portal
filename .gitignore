@@ -2,6 +2,3 @@
 flask/
 app.db
 migrations/
-app/static/shared/*
-app/static/inject_submissions/*
-app/static/ticket_img/*

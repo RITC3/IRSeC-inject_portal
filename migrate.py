@@ -1,3 +1,4 @@
+#!flask/bin/python
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.script import Manager
