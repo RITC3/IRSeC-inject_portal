@@ -108,6 +108,10 @@ RoleModelView: The model view for roles
 Parent: .AdminModelView
 """
 class RoleModelView(AdminModelView):
+    # adding, deleting or changing role names would be useless...
+    can_delete = False
+    can_create = False
+    form_excluded_columns = ('name')
     pass
 
 
