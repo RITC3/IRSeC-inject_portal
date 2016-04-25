@@ -8,7 +8,7 @@
                 <h4 class="modal-title"></h4>
             </div>
                 <div class="modal-body">
-                    <input type="hidden" id="sub_id"></input>
+                    <input type="hidden" id="sub-id"></input>
                     <h4>File</h4>
                     <span id="sub-file"></span>
                     <h4>Time Submitted</h4>
@@ -108,19 +108,21 @@
                             $("#submit-grade").attr("class", "btn btn-primary").html("Re-Grade");
                         }
                         $("#grade-modal").modal("toggle");
-                        $("#submit-grade").click(function(){
-                                if ($("#newgrade").val() > sub.inject_val || $("#newgrade").val() < 0){
-                                alert("new grade is invalid");
-                                return;
-                            }
-                            $.ajax({
-                                url: "/injects/api/grade/" + id + "/" + $("#newgrade").val(),
-                                type: "get",
-                                success: function(data, stat, xhr){
-                                    $("#grade-modal").modal("hide");
-                                }
-                            });
-                        });
+                    }
+                });
+            });
+            $(".modal-footer").on('click', '#submit-grade', function(){
+                if ($("#newgrade").val() > parseInt($('#sub-val').html()) || $("#newgrade").val() < 0){
+                    alert("New grade is invalid");
+                    return;
+                }
+                $.ajax({
+                    url: "/injects/api/grade/" + $("#sub-id").val() + "/" + $("#newgrade").val(),
+                    type: "get",
+                    success: function(data, stat, xhr){
+                        $("#grade-modal").modal("hide");
+                        ungraded_table.ajax.reload(null, false);
+                        graded_table.ajax.reload(null, false);
                     }
                 });
             });
