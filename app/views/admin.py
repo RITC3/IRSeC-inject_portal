@@ -127,6 +127,20 @@ class InjectModelView(WhiteTeamModelView):
     form_choices = { 'inject_doc': files }
     form_args = { 'inject_doc': { 'validators': list() } }
 
+    def create_form(self, obj=None):
+        form = super(InjectModelView, self).create_form(obj)
+        self.files = filter(lambda f: not f.startswith("."), listdir(path.join(basedir, 'app', 'injects')))
+        self.files = [(x, x) for x in self.files]
+        form.inject_doc.choices = self.files
+        return form
+
+    def edit_form(self, obj=None):
+        form = super(InjectModelView, self).edit_form(obj)
+        self.files = filter(lambda f: not f.startswith("."), listdir(path.join(basedir, 'app', 'injects')))
+        self.files = [(x, x) for x in self.files]
+        form.inject_doc.choices = self.files
+        return form
+
 
 class AnnouncementModelView(WhiteTeamModelView):
     pass
