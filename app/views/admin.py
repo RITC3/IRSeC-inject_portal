@@ -128,6 +128,10 @@ class InjectModelView(WhiteTeamModelView):
     form_args = { 'inject_doc': { 'validators': list() } }
 
 
+class AnnouncementModelView(WhiteTeamModelView):
+    pass
+
+
 """
 WhiteTeamFileAdmin: The file admin view that white team can manage
 Parents: FileAdmin, WhiteTeamBaseView

@@ -123,3 +123,7 @@ class InjectSubmission(db.Model):
     @hybrid_property
     def timestamp_str(self):
         return self.timestamp.strftime('%A, %B %d, %Y, %I:%M %p')
+
+class Announcement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(500))

@@ -4,12 +4,16 @@ function teamportal(teamemail){
         "ajax": "/injects/api/list/" + teamemail,
         "order": [[ 2, "desc" ]]
     });
-    setInterval( function () { inject_table.ajax.reload(null, false); }, 2000);
     $('#injects tbody').on('click', '#inject_submit', function () {
         var rowiter = $('td:first', $(this).parents('tr'));
         var id = rowiter.text();
         var name = rowiter.next().text();
         $('.inject-modal-title').html("Submit Inject: " + name);
+        if ($(this).text() == "Manual"){
+            $(".inject-modal-warning").html("WHITE TEAM MUST CHECK THIS BEFORE THE END TIME FOR YOU TO GET ANY CREDIT");
+        } else {
+            $(".inject-modal-warning").html("");
+        }
         $('#injectid').val(id);
         $('#inject-modal').modal('toggle');
     });
@@ -37,5 +41,23 @@ function teamportal(teamemail){
             type: 'GET'
         });
         sub_table.ajax.reload(null, false);
+    });
+    update_announcements();
+    setInterval( function () { inject_table.ajax.reload(null, false); }, 2000);
+    setInterval( update_announcements, 20000);
+}
+
+function update_announcements() {
+    $.ajax({
+        url: '/api/announcements',
+        type: 'GET',
+        dataType: 'json',
+        contentType: "application/json",
+        success: function(data, stat, xhr){
+            $('#announcements').html("");
+            $.each(data, function(i, ann){
+                $('#announcements').append("<li>" + ann + "</li>")
+            });
+        }
     });
 }

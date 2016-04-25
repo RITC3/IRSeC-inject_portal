@@ -4,6 +4,7 @@ from flask import render_template, g, Blueprint, request, make_response, abort, 
 from flask.ext.security import current_user, login_required
 from config import basedir
 import os
+import json
 from app.models import *
 from app.forms import *
 
@@ -47,6 +48,13 @@ def files(path):
                            parent=os.pardir,
                            join=os.path.join)
 
+@main.route('/api/announcements')
+@login_required
+def announcements():
+    anns = list()
+    for ann in Announcement.query.all():
+        anns.append(ann.text)
+    return json.dumps(anns)
 
 # http://stackoverflow.com/a/1094933
 # expects bytes

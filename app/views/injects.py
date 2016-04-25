@@ -54,7 +54,7 @@ def get_injects(team_name):
         if inject.has_ended:
             row.append("<button class='btn btn-danger' disabled='disabled'>Closed</button>")
         elif inject.manual:
-            row.append("<button class='btn btn-primary' disabled='disabled'>Manual</button>")
+            row.append("<button id='inject_submit' class='btn btn-warning'" + disabled + ">Manual</button>")
         else:
             row.append("<button id='inject_submit' class='btn btn-success'" + disabled + ">Submit</button>")
         data['data'].append(row)
