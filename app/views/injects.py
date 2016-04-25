@@ -49,8 +49,8 @@ def get_injects(team_name):
         else:
             row.append(len(submissions))
         disabled = ""
-        #if not g.user.is_blueteam:
-        #    disabled = " disabled='disabled'"
+        if not g.user.is_blueteam:
+            disabled = " disabled='disabled'"
         if inject.has_ended:
             row.append("<button class='btn btn-danger' disabled='disabled'>Closed</button>")
         elif inject.manual:

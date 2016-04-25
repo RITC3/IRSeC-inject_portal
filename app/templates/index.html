@@ -2,9 +2,17 @@
 {% block content %}
 <div class="jumbotron">
     <div class="row">
-        <div class="col-md-12">
-            Hello {{g.user.email}}
-        </div>
+        Hello {{g.user.email}}
     </div>
+    {% if g.user.is_authenticated and g.user.is_whiteteam %}
+    <div class="row">
+        <h3>Team Portal Links</h3>
+        <ul>
+        {% for i in blueteams %}
+            <li><a href="{{url_for('teamportal.team_page', team=i.email)}}">{{i.email}}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}

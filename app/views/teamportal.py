@@ -32,8 +32,8 @@ def team_page(team):
             flash("The submission period for this inject has expired")
             submit_form = False
         if form.validate_on_submit() and submit_form:
-            #if g.user != team:
-            #    abort(500)
+            if g.user != team:
+                abort(500)
             if injectf:
                 if not os.path.exists(teamdir):
                     os.mkdir(teamdir)

@@ -16,7 +16,8 @@ main = Blueprint('main', __name__)
 def index():
     if g.user.is_authenticated and g.user.is_blueteam:
         return redirect(url_for('teamportal.team_portal'))
-    return render_template("index.html")
+    blueteams = [x for x in User.query.all() if x.is_blueteam]
+    return render_template("index.html", blueteams=blueteams)
 
 @main.route('/files', defaults={'path': ''})
 @main.route('/files/', defaults={'path': ''})
