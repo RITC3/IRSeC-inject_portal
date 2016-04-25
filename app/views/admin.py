@@ -4,6 +4,8 @@ from flask_admin.contrib.fileadmin import FileAdmin
 from flask.ext.security import utils
 from wtforms import PasswordField, validators
 from flask import redirect, url_for, flash, g
+from os import listdir, path
+from config import basedir
 
 """
 AdminBaseView: Access control for the admin panel, without this there is none!
@@ -120,7 +122,10 @@ InjectModelView: The model view for Injects
 Parent: .AdminModelView
 """
 class InjectModelView(WhiteTeamModelView):
-    pass
+    files = filter(lambda f: not f.startswith("."), listdir(path.join(basedir, 'app', 'injects')))
+    files = [(x, x) for x in files]
+    form_choices = { 'inject_doc': files }
+    form_args = { 'inject_doc': { 'validators': list() } }
 
 
 """

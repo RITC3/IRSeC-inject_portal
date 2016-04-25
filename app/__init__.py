@@ -30,16 +30,20 @@ try:
         userstore.find_or_create_role(name='whiteteam', description='White team accounts')
         userstore.create_user(email=FIRST_USER_NAME,
                             password=utils.encrypt_password(FIRST_USER_PASS))
+        userstore.create_user(email="team0",
+                            password=utils.encrypt_password("team0"))
         userstore.add_role_to_user(FIRST_USER_NAME, 'admin')
+        userstore.add_role_to_user("team0", 'blueteam')
         db.session.commit()
 except: db.session.rollback()
 
 # get the view controllers for the app
-from app.views import main, admin, common, teamportal
+from app.views import main, teamportal, admin, common, injects
 
 # set up main as a blueprint, add as many blueprints as necessary
 app.register_blueprint(main.main)
 app.register_blueprint(teamportal.teamportal)
+app.register_blueprint(injects.injects)
 
 # configure the admin interface, populate it with pages and links
 app_admin = Admin(app, 'IRSeC Inject Portal Admin', template_mode='bootstrap3', index_view=admin.ProtectedIndexView())

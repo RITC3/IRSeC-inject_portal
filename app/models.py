@@ -12,11 +12,6 @@ roles_users = db.Table('roles_users',
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
 
-submissions_users = db.Table('submissions_users',
-        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-        db.Column('submission_id', db.Integer(), db.ForeignKey('injectsubmission.id')))
-
-
 """
 User: defines users and their attribles for the website
 Parents: db.Model, flask.ext.security.UserMixin
@@ -33,8 +28,6 @@ class User(db.Model, UserMixin):
     login_count = db.Column(db.Integer)
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
-    submissions = db.relationship('InjectSubmission', secondary=submissions_users,
-                            backref=db.backref('teams', lazy='dynamic'))
 
     """flask admin needs this to print the user correctly"""
     def __str__(self):
@@ -76,21 +69,24 @@ class Role(db.Model, RoleMixin):
 class Inject(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
-    description = db.Column(db.String(1000))
+    inject_doc = db.Column(db.String(1000))
     value = db.Column(db.Integer) # will this be used?
     publish = db.Column(db.Boolean)
-    publish_time = db.Column(db.DateTime, default=datetime.now())
-    end_time = db.Column(db.DateTime)
+    publish_time = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    manual = db.Column(db.Boolean, default=False)
 
-    """flask admin needs this to print the role correctly"""
+    """flask admin needs this to print the object correctly"""
     def __str__(self):
         return self.name
 
+    @hybrid_property
     def has_ended(self):
-        if datetime.now() > self.end_time:
+        if self.end_time and datetime.now() > self.end_time:
             return True
         return False
 
+    @hybrid_property
     def is_published(self):
         if self.publish and datetime.now() > self.publish_time:
             return True
@@ -98,11 +94,13 @@ class Inject(db.Model):
 
     @hybrid_property
     def publish_time_str(self):
-        return self.publish_time.strftime('%A, %B %d %Y %I:%M%p')
+        if self.publish_time:
+            return self.publish_time.strftime('%A, %B %d, %Y, %I:%M %p')
 
     @hybrid_property
-    def print_end_str(self):
-        return self.end_time.strftime('%A, %B %d %Y %I:%M%p')
+    def end_time_str(self):
+        if self.end_time:
+            return self.end_time.strftime('%A, %B %d, %Y, %I:%M %p')
 
 
 class InjectSubmission(db.Model):
@@ -111,9 +109,17 @@ class InjectSubmission(db.Model):
     title = db.Column(db.String(60))
     notes = db.Column(db.String(500))
     attachment = db.Column(db.String(100))
+    timestamp = db.Column(db.DateTime, default=datetime.now())
     inject_id = db.Column(db.Integer, db.ForeignKey('inject.id'), nullable=False)
-    inject = db.relationship("Inject")
+    inject = db.relationship("Inject", foreign_keys=[inject_id])
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", foreign_keys=[user_id])
+    grade = db.Column(db.Integer)
 
-    """flask admin needs this to print the role correctly"""
+    """flask admin needs this to print the object correctly"""
     def __str__(self):
         return self.title
+
+    @hybrid_property
+    def timestamp_str(self):
+        return self.timestamp.strftime('%A, %B %d, %Y, %I:%M %p')

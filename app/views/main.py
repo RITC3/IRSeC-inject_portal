@@ -1,6 +1,6 @@
 #!flask/bin/python
 from app import db, app
-from flask import render_template, g, Blueprint, request, make_response, abort
+from flask import render_template, g, Blueprint, request, make_response, abort, redirect, url_for
 from flask.ext.security import current_user, login_required
 from config import basedir
 import os
@@ -14,6 +14,8 @@ main = Blueprint('main', __name__)
 @main.route('/index')
 @main.route('/home')
 def index():
+    if g.user.is_authenticated and g.user.is_blueteam:
+        return redirect(url_for('teamportal.team_portal'))
     return render_template("index.html")
 
 @main.route('/files', defaults={'path': ''})

@@ -15,6 +15,7 @@ MYSQL_USERNAME = f.readline().strip()
 MYSQL_PASSWORD = f.readline().strip()
 SQLALCHEMY_DATABASE_URI = 'mysql://' + MYSQL_USERNAME + ":" + MYSQL_PASSWORD + "@" + MYSQL_HOST + ":3306/" + MYSQL_DB
 """
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 SQLALCHEMY_TRACK_MODIFICATIONS = False # to silence a warning
 SECURITY_TRACKABLE = True # enable extra logging for flask-security
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repo') # for db upgrades
