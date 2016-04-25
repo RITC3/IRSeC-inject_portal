@@ -140,7 +140,7 @@ def grade_sub(sub_id, grade):
 def grade():
     if not g.user.is_whiteteam:
         abort(404)
-    return render_template("grade.html", team="Inject Grading")
+    return render_template("grade.html", title="Inject Grading")
 
 @injects.route('/api/submissions/delete/<sub_id>')
 @login_required
