@@ -129,7 +129,7 @@ class InjectModelView(WhiteTeamModelView):
 
 
 """
-WhiteTeamFileAdmin: The file admin view for shared files
+WhiteTeamFileAdmin: The file admin view that white team can manage
 Parents: FileAdmin, WhiteTeamBaseView
 """
 class WhiteTeamFileAdmin(FileAdmin, WhiteTeamBaseView):
@@ -138,3 +138,11 @@ class WhiteTeamFileAdmin(FileAdmin, WhiteTeamBaseView):
         self.can_delete = g.user.is_admin
         self.can_delete_dirs = g.user.is_admin
         return super(WhiteTeamFileAdmin, self).is_accessible()
+
+
+class SharedFileAdmin(WhiteTeamFileAdmin):
+    pass
+
+
+class InjectFileAdmin(WhiteTeamFileAdmin):
+    pass
