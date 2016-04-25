@@ -93,7 +93,9 @@ def all_injects():
     data['ungraded'] = list()
     subs = InjectSubmission.query.all()
     for sub in subs:
-        row = [sub.id, sub.user.email, sub.grade_str, sub.inject.value, sub.timestamp_str]
+        row = [sub.id, sub.user.email, sub.grade_str, sub.inject.value]
+        row.append(("Yes" if sub.inject.manual else "No"))
+        row.append(sub.timestamp_str)
         if sub.grade:
             row.append("<button id='grade' class='btn btn-primary'>Re-grade</button>")
             data['graded'].append(row)
@@ -118,7 +120,7 @@ def single_sub(sub_id):
             "inject_name": sub.inject.name,
             "inject_val": sub.inject.value,
             "user_id": sub.user_id,
-            "user_name": sub.user.email
+            "user_name": sub.user.email,
            }
     return json.dumps(data)
 
