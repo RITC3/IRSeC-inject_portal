@@ -121,6 +121,12 @@ class InjectSubmission(db.Model):
         return self.title
 
     @hybrid_property
+    def grade_str(self):
+        if self.grade:
+            return str(self.grade)
+        return "None"
+
+    @hybrid_property
     def timestamp_str(self):
         return self.timestamp.strftime('%A, %B %d, %Y, %I:%M %p')
 

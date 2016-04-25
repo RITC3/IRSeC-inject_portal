@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="modal fade" id="grade-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+                <div class="modal-body">
+                    <input type="hidden" id="sub_id"></input>
+                    <h4>File</h4>
+                    <span id="sub-file"></span>
+                    <h4>Time Submitted</h4>
+                    <span id="sub-time"></span>
+                    <h4>Notes</h4>
+                    <p id="sub-notes"></p>
+                    <h4>Inject Value</h4>
+                    <span id="sub-val"></span>
+                    <h4>Grade</h4>
+                    <input class="form-control" id="newgrade"></input>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" id="submit-grade" class="btn btn-success">Grade</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <h3>Ungraded</h3>
+    <table id="ungraded" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Team</th>
+                <th>Grade</th>
+                <th>Value</th>
+                <th>Timestamp</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<div class="row">
+    <h3>Graded</h3>
+    <table id="graded" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Team</th>
+                <th>Grade</th>
+                <th>Value</th>
+                <th>Timestamp</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+</div>
+{% endblock content %}
+{% block footer %}
+    <script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.11/sorting/datetime-moment.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.fn.dataTable.ext.errMode = 'throw';
+            $.fn.dataTable.moment( 'dddd, MMMM Do, YYYY, hh:mm A' );
+            var ungraded_table = $('#ungraded').DataTable({
+                "ajax": {
+                    url: '/injects/api/submissions/all',
+                    dataSrc: "ungraded"
+                },
+                "bAutoWidth": false,
+                "paging": false
+            });
+            var graded_table = $('#graded').DataTable({
+                "ajax": {
+                    url: '/injects/api/submissions/all',
+                    dataSrc: "graded"
+                },
+                "bAutoWidth": false
+            });
+            $("#graded, #ungraded tbody").on("click", "#grade", function(){
+                var id = $('td:first', $(this).parents('tr')).text();
+                $.ajax({
+                    url: '/injects/api/submissions/single/' + id,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json",
+                    success: function(sub, stat, xhr){
+                        $(".modal-title").html("Grade: " + sub.user_name + " - " + sub.title);
+                        if (sub.attachment == ""){
+                            $("#sub-file").html("None");
+                        } else {
+                            $("#sub-file").html("<a target='_blank' href='/injects/submissions/files/" + id + "'>" + sub.attachment + "</a>");
+                        }
+                        $("#sub-time").html(sub.timestamp);
+                        $("#sub-notes").html(sub.notes);
+                        $("#newgrade").val(sub.grade);
+                        $("#sub-val").html(sub.inject_val);
+                        $("#sub-id").val(sub.id);
+                        if (sub.grade == "None"){
+                            $("#submit-grade").attr("class", "btn btn-success").html("Grade");
+                        } else {
+                            $("#submit-grade").attr("class", "btn btn-primary").html("Re-Grade");
+                        }
+                        $("#grade-modal").modal("toggle");
+                        $("#submit-grade").click(function(){
+                                if ($("#newgrade").val() > sub.inject_val || $("#newgrade").val() < 0){
+                                alert("new grade is invalid");
+                                return;
+                            }
+                            $.ajax({
+                                url: "/injects/api/grade/" + id + "/" + $("#newgrade").val(),
+                                type: "get",
+                                success: function(data, stat, xhr){
+                                    $("#grade-modal").modal("hide");
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+            setInterval( function () { ungraded_table.ajax.reload(null, false); }, 1000 * 10);
+            setInterval( function () { graded_table.ajax.reload(null, false); }, 1000 * 10);
+        });
+    </script>
+{% endblock footer %}

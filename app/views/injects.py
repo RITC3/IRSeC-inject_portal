@@ -83,6 +83,63 @@ def get_submissions(team_name, inject_id):
         data['data'].append(row)
     return json.dumps(data)
 
+@injects.route('/api/submissions/all')
+@login_required
+def all_injects():
+    if not g.user.is_whiteteam:
+        return "", 403
+    data = dict()
+    data['graded'] = list()
+    data['ungraded'] = list()
+    subs = InjectSubmission.query.all()
+    for sub in subs:
+        row = [sub.id, sub.user.email, sub.grade_str, sub.inject.value, sub.timestamp_str]
+        if sub.grade:
+            row.append("<button id='grade' class='btn btn-primary'>Re-grade</button>")
+            data['graded'].append(row)
+        else:
+            row.append("<button id='grade' class='btn btn-primary'>Grade</button>")
+            data['ungraded'].append(row)
+    return json.dumps(data)
+
+@injects.route('/api/submissions/single/<sub_id>')
+@login_required
+def single_sub(sub_id):
+    if not g.user.is_whiteteam:
+        return "", 403
+    sub = InjectSubmission.query.filter_by(id=sub_id).first_or_404()
+    data = {"id": sub.id,
+            "title": sub.title,
+            "notes": sub.notes,
+            "attachment": sub.attachment,
+            "timestamp": sub.timestamp_str,
+            "grade": sub.grade_str,
+            "inject_id": sub.inject_id,
+            "inject_name": sub.inject.name,
+            "inject_val": sub.inject.value,
+            "user_id": sub.user_id,
+            "user_name": sub.user.email
+           }
+    return json.dumps(data)
+
+@injects.route('/api/grade/<sub_id>/<int:grade>')
+@login_required
+def grade_sub(sub_id, grade):
+    if not g.user.is_whiteteam:
+        return 403, ""
+    sub = InjectSubmission.query.filter_by(id=sub_id).first_or_404()
+    sub.grade = grade
+    db.session.add(sub)
+    db.session.commit()
+    return "",200
+
+@injects.route('/grade')
+@login_required
+def grade():
+    if not g.user.is_whiteteam:
+        abort(404)
+    return render_template("grade.html", team="Inject Grading")
+
 @injects.route('/api/submissions/delete/<sub_id>')
 @login_required
 def delete_submission(sub_id):

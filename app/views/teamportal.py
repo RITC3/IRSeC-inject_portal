@@ -1,6 +1,6 @@
 #!flask/bin/python
 from app import db, app
-from flask import render_template, g, Blueprint, request, make_response, abort
+from flask import render_template, g, Blueprint, request, make_response, abort, redirect, url_for
 from flask.ext.security import current_user, login_required
 from werkzeug import secure_filename
 from config import basedir
@@ -52,4 +52,4 @@ def team_page(team):
 @login_required
 @teamportal.route('/')
 def team_portal():
-    return team_page(g.user.email)
+    return redirect(url_for('teamportal.team_page', team=g.user.email))

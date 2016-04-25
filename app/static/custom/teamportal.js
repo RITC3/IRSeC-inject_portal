@@ -1,8 +1,10 @@
 function teamportal(teamemail){
+    $.fn.dataTable.ext.errMode = 'throw';
     $.fn.dataTable.moment( 'dddd, MMMM Do, YYYY, hh:mm A' );
     var inject_table = $('#injects').DataTable( {
         "ajax": "/injects/api/list/" + teamemail,
-        "order": [[ 2, "desc" ]]
+        "order": [[ 2, "desc" ]],
+        "bAutoWidth": false
     });
     $('#injects tbody').on('click', '#inject_submit', function () {
         var rowiter = $('td:first', $(this).parents('tr'));

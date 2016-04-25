@@ -40,6 +40,7 @@
                     <li id="files"><a href="{{url_for('main.files')}}"><i class="fa fa-dashboard"></i> Files</a></li>
                     {% if g.user.is_whiteteam %}
                     <li id="admin"><a href="{{url_for('admin.index')}}"><i class="fa fa-cog"></i> Admin</a></li>
+                    <li id="grade"><a href="{{url_for('injects.grade')}}"><i class="fa fa-pencil"></i> Grade</a></li>
                     {% endif %}
                     <li id="logout"><a href="{{url_for('security.logout')}}"><i class="fa fa-sign-out"></i> Logout</a></li>
                     {% else %}
