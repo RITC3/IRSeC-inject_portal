@@ -122,24 +122,23 @@ InjectModelView: The model view for Injects
 Parent: .AdminModelView
 """
 class InjectModelView(WhiteTeamModelView):
-    files = filter(lambda f: not f.startswith("."), listdir(path.join(basedir, 'app', 'injects')))
-    files = [(x, x) for x in files]
-    form_choices = { 'inject_doc': files }
     form_args = { 'inject_doc': { 'validators': list() } }
+    form_choices = {'inject_doc': [(1, 1)]} #hack to give us the selector dropdown
 
     def create_form(self, obj=None):
         form = super(InjectModelView, self).create_form(obj)
-        self.files = filter(lambda f: not f.startswith("."), listdir(path.join(basedir, 'app', 'injects')))
-        self.files = [(x, x) for x in self.files]
-        form.inject_doc.choices = self.files
+        form.inject_doc.choices = self.get_files()
         return form
 
     def edit_form(self, obj=None):
         form = super(InjectModelView, self).edit_form(obj)
-        self.files = filter(lambda f: not f.startswith("."), listdir(path.join(basedir, 'app', 'injects')))
-        self.files = [(x, x) for x in self.files]
-        form.inject_doc.choices = self.files
+        form.inject_doc.choices = self.get_files()
         return form
+
+    def get_files(self):
+        files = filter(lambda f: not f.startswith("."), listdir(path.join(basedir, 'app', 'injects')))
+        files = [(x, x) for x in files]
+        return files
 
 
 class AnnouncementModelView(WhiteTeamModelView):
