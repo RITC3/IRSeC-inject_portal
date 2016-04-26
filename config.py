@@ -6,6 +6,7 @@ f = open(os.path.join(basedir, 'app.vars') , 'r')
 
 # security is always good
 CSRF_ENABLED = True
+WTF_CSRF_ENABLED = True
 
 # uncomment out these next 4 lines if using mysql, comment out sqlite line
 """

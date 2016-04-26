@@ -2,6 +2,7 @@ from flask.ext.admin import AdminIndexView, BaseView
 from flask.ext.admin.contrib.sqla.view import ModelView
 from flask_admin.contrib.fileadmin import FileAdmin
 from flask.ext.security import utils
+from flask_admin.form import SecureForm
 from wtforms import PasswordField, validators
 from flask import redirect, url_for, flash, g
 from os import listdir, path
@@ -60,6 +61,7 @@ AdminModelView: Add RBAC to flask-admin's model view
 Parents: flask.ext.admin.contrib.sqla.view.ModelView, .AdminBaseView
 """
 class AdminModelView(ModelView, AdminBaseView):
+    form_base_class = SecureForm
     pass
 
 
@@ -68,6 +70,7 @@ WhiteTeamModelView: Add RBAC to flask-admin's model view
 Parents: flask.ext.admin.contrib.sqla.view.ModelView, .AdminBaseView
 """
 class WhiteTeamModelView(ModelView, WhiteTeamBaseView):
+    form_base_class = SecureForm
 
     def is_accessible(self):
         self.can_create = g.user.is_admin

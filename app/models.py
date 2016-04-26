@@ -70,8 +70,8 @@ class Inject(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     inject_doc = db.Column(db.String(1000))
-    value = db.Column(db.Integer) # will this be used?
-    publish = db.Column(db.Boolean)
+    value = db.Column(db.Integer)
+    publish = db.Column(db.Boolean, default=True)
     publish_time = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     end_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
     manual = db.Column(db.Boolean, default=False)
@@ -132,4 +132,23 @@ class InjectSubmission(db.Model):
 
 class Announcement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(500))
+    text = db.Column(db.String(500), nullable=False)
+    published = db.Column(db.Boolean, default=True)
+    publish_time = db.Column(db.DateTime, default=datetime.now())
+    end_time = db.Column(db.DateTime)
+
+    """flask admin needs this to print the object correctly"""
+    def __str__(self):
+        return self.name
+
+    @hybrid_property
+    def has_ended(self):
+        if self.end_time and datetime.now() > self.end_time:
+            return True
+        return False
+
+    @hybrid_property
+    def is_published(self):
+        if self.published and datetime.now() > self.publish_time:
+            return True
+        return False

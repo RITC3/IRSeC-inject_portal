@@ -1,6 +1,6 @@
 #!flask/bin/python
 from app import db, app
-from flask import render_template, g, Blueprint, request, make_response, abort, redirect, url_for
+from flask import render_template, g, Blueprint, request, abort, send_from_directory, redirect, url_for
 from flask.ext.security import current_user, login_required
 from config import basedir
 import os
@@ -31,10 +31,7 @@ def files(path):
         flash("don't be a asshole", category="error")
         abort(404)
     if os.path.isfile(f):
-        with open(f) as inf:
-            resp = make_response(inf.read())
-        resp.headers["Content-Disposition"] = "attachment; filename=" + os.path.basename(f)
-        return resp
+        return send_from_directory(base, path)
     elif os.path.isdir(f):
         files = os.listdir(f)
         files = ([{"name": x+"/", "size": ""} for x in files if os.path.isdir(os.path.join(f, x))] +
@@ -53,7 +50,8 @@ def files(path):
 def announcements():
     anns = list()
     for ann in Announcement.query.all():
-        anns.append(ann.text)
+        if ann.is_published and not ann.has_ended:
+            anns.append(ann.text)
     return json.dumps(anns)
 
 # http://stackoverflow.com/a/1094933
