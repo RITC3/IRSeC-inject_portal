@@ -19,6 +19,8 @@ SQLALCHEMY_DATABASE_URI = 'mysql://' + MYSQL_USERNAME + ":" + MYSQL_PASSWORD + "
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 SQLALCHEMY_TRACK_MODIFICATIONS = False # to silence a warning
 SECURITY_TRACKABLE = True # enable extra logging for flask-security
+SECURITY_CHANGEABLE = True
+SECURITY_SEND_PASSWORD_CHANGE_EMAIL = False
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repo') # for db upgrades
 # get the database path
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db') + '?check_same_thread=False'

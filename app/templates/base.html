@@ -42,6 +42,7 @@
                     <li id="admin"><a href="{{url_for('admin.index')}}"><i class="fa fa-cog"></i> Admin</a></li>
                     <li id="grade"><a href="{{url_for('injects.grade')}}"><i class="fa fa-pencil"></i> Grade</a></li>
                     {% endif %}
+                    <li id="pass"><a href="{{url_for('security.change_password')}}"><i class="fa fa-key"></i> Change Password</a></li>
                     <li id="logout"><a href="{{url_for('security.logout')}}"><i class="fa fa-sign-out"></i> Logout</a></li>
                     {% else %}
                     <li id="login"><a href="{{url_for('security.login')}}"><i class="fa fa-sign-in"></i> Login</a></li>
