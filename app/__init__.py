@@ -13,7 +13,7 @@ import os
 app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
-#CsrfProtect(app) #flask admin breaks with this. so security-- because I don't have the time to debug mrjoes code
+CsrfProtect(app) #flask admin breaks with this. so security-- because I don't have the time to debug mrjoes code
 
 # set up the database model if not already set up
 from app import models

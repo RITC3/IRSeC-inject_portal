@@ -18,7 +18,7 @@
                     <h4>Inject Value</h4>
                     <span id="sub-val"></span>
                     <h4>Grade</h4>
-                    <input class="form-control" id="newgrade"></input>
+                    <input class="form-control" id="newgrade" placeholder="None"></input>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -101,12 +101,13 @@
                         }
                         $("#sub-time").html(sub.timestamp);
                         $("#sub-notes").html(sub.notes);
-                        $("#newgrade").val(sub.grade);
                         $("#sub-val").html(sub.inject_val);
                         $("#sub-id").val(sub.id);
                         if (sub.grade == "None"){
+                            $("#newgrade").val("");
                             $("#submit-grade").attr("class", "btn btn-success").html("Grade");
                         } else {
+                            $("#newgrade").val(sub.grade);
                             $("#submit-grade").attr("class", "btn btn-primary").html("Re-Grade");
                         }
                         $("#grade-modal").modal("toggle");
