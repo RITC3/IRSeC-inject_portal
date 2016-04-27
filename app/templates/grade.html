@@ -115,7 +115,8 @@
                 });
             });
             $(".modal-footer").on('click', '#submit-grade', function(){
-                if ($("#newgrade").val() > parseInt($('#sub-val').html()) || $("#newgrade").val() < 0){
+                var newgrade = $("#newgrade").val()
+                if (newgrade > parseInt($('#sub-val').html()) || newgrade < 0 || isNaN(newgrade)){
                     alert("New grade is invalid");
                     return;
                 }
