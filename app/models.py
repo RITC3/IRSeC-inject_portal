@@ -70,7 +70,7 @@ class Inject(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     inject_doc = db.Column(db.String(1000))
-    value = db.Column(db.Integer)
+    value = db.Column(db.Integer, nullable=False)
     publish = db.Column(db.Boolean, default=True)
     publish_time = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     end_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
