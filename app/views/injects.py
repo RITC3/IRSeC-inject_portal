@@ -93,7 +93,7 @@ def all_injects():
     data['ungraded'] = list()
     subs = InjectSubmission.query.all()
     for sub in subs:
-        row = [sub.id, sub.user.email, sub.grade_str, sub.inject.value]
+        row = [sub.id, sub.inject.name, sub.user.email, sub.grade_str, sub.inject.value]
         row.append(("Yes" if sub.inject.manual else "No"))
         row.append(sub.timestamp_str)
         if sub.grade:
