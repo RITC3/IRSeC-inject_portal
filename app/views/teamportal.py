@@ -28,7 +28,8 @@ def team_page(team):
         if injectf and os.path.exists(fpath):
             flash("The file you are trying to submit already exists, upload it with a different name")
             submit_form = False
-        if inject.has_ended:
+        extensions = [x for x in inject.extensions if g.user in x.teams and not x.has_ended]
+        if inject.has_ended and not len(extensions):
             flash("The submission period for this inject has expired")
             submit_form = False
         if form.validate_on_submit() and submit_form:

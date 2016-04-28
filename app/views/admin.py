@@ -126,6 +126,7 @@ Parent: .AdminModelView
 class InjectModelView(WhiteTeamModelView):
     form_args = { 'inject_doc': { 'validators': list() } }
     form_choices = {'inject_doc': [(1, 1)]} #hack to give us the selector dropdown
+    form_excluded_columns = ('extensions')
 
     def create_form(self, obj=None):
         form = super(InjectModelView, self).create_form(obj)
@@ -165,3 +166,7 @@ class SharedFileAdmin(WhiteTeamFileAdmin):
 
 class InjectFileAdmin(WhiteTeamFileAdmin):
     pass
+
+
+class InjectExtensionModelView(WhiteTeamModelView):
+    form_args = {"duration": {"label": "Duration (in minutes)"}}

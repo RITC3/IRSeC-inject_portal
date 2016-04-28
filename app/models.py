@@ -1,7 +1,7 @@
 from app import db
 from sqlalchemy.ext.hybrid import hybrid_property
-from flask.ext.security import UserMixin, RoleMixin, current_user
-from datetime import datetime
+from flask.ext.security import UserMixin, RoleMixin
+from datetime import datetime, timedelta
 
 """ a third table must be created to relate users to roles by id.
     this is an example of a many-to-many relationship in SQLAlchemy
@@ -11,6 +11,9 @@ roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
+extensions_users = db.Table('extensions_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('ext_id', db.Integer(), db.ForeignKey('injectextension.id')))
 
 """
 User: defines users and their attribles for the website
@@ -28,6 +31,9 @@ class User(db.Model, UserMixin):
     login_count = db.Column(db.Integer)
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
+    extensions = db.relationship('InjectExtension', lazy='dynamic', backref='teams',
+                                 secondary=extensions_users)
+
 
     """flask admin needs this to print the user correctly"""
     def __str__(self):
@@ -75,6 +81,7 @@ class Inject(db.Model):
     publish_time = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     end_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
     manual = db.Column(db.Boolean, default=False)
+    extensions = db.relationship('InjectExtension', lazy='dynamic', backref='inject')
 
     """flask admin needs this to print the object correctly"""
     def __str__(self):
@@ -150,5 +157,18 @@ class Announcement(db.Model):
     @hybrid_property
     def is_published(self):
         if self.published and datetime.now() > self.publish_time:
+            return True
+        return False
+
+class InjectExtension(db.Model):
+    __tablename__ = "injectextension"
+    id = db.Column(db.Integer, primary_key=True)
+    inject_id = db.Column(db.Integer, db.ForeignKey('inject.id'), nullable=False)
+    duration = db.Column(db.Integer, nullable=False) #in minutes
+    start_time = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+
+    @hybrid_property
+    def has_ended(self):
+        if datetime.now() > self.start_time + timedelta(minutes=self.duration):
             return True
         return False
